@@ -49,11 +49,10 @@
         line-height: 20px;
       }
     </style>
-
-<script src="http://d3js.org/d3/d3.v3.min.js" charset="utf-8"></script>
 </head>
 
 <body id="top">
+<script src="http://d3js.org/d3.v3.min.js"></script>
 <p>Order: 
   <select id="order">
   <option value="probecontrast">by probe name and contrast name</option>
@@ -100,10 +99,6 @@ function(error, data) {
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-     
-
- 
 
   var rowLabels = svg.selectAll(".rowLabel")
       .data(rowLabel)
