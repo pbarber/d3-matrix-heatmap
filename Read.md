@@ -1,0 +1,1 @@
+This example is inspired by [an example](http://bost.ocks.org/mike/miserables/ "Les Misérables Co-occurrence")  and by http://trends.truliablog.com/2011/09/house-hunter-by-day-not-so-much-after-midnight/
