@@ -1,11 +1,5 @@
 <meta charset="utf-8">
     <style>
-    body {
-        width: 960px;
-        margin: auto;
-        position: relative;
-        overflow: scroll;
-      }
       rect.bordered {
         stroke: #CCC;
         stroke-width:0.5px;   
@@ -62,16 +56,15 @@ Order:
   <option value="contrast">by contrast name</option>
   <option value="hclust">by cluster</option>
   </select>
-
+<div id="chart" style='overflow:auto; width:960px; height:400px;'></div>
 
 <script type="text/javascript">
 var margin = { top: 80, right: 10, bottom: 50, left: 100 },
   cellSize=12;
   col_number=60;
   row_number=50;
-  width = cellSize*col_number, // - margin.left - margin.right,
-  height = cellSize*row_number , // - margin.top - margin.bottom,
-  //gridSize = Math.floor(width / 24),
+  width = cellSize*col_number, 
+  height = cellSize*row_number ,
   legendElementWidth = cellSize*3,
   colorBuckets = 21,
   colors = ['#005824','#1A693B','#347B53','#4F8D6B','#699F83','#83B09B','#9EC2B3','#B8D4CB','#D2E6E3','#EDF8FB','#FFFFFF','#F1EEF6','#E6D3E1','#DBB9CD','#D19EB9','#C684A4','#BB6990','#B14F7C','#A63467','#9B1A53','#91003F'];
@@ -92,7 +85,7 @@ function(error, data) {
       .domain([ -10 , 0, 10])
       .range(colors);
   
-  var svg = d3.select("body").append("svg")
+  var svg = d3.select("chart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
