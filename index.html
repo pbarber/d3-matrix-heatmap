@@ -62,8 +62,6 @@
   </select>
 </p>
 
-<div id="chart" style='overflow:auto;'></div>
-
 <script type="text/javascript">
 var margin = { top: 150, right: 10, bottom: 50, left: 100 },
   cellSize=12;
@@ -92,7 +90,7 @@ function(error, data) {
       .domain([ -10 , 0, 10])
       .range(colors);
   
-  var svg = d3.select("#chart").append("svg")
+  var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
