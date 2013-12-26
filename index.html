@@ -64,10 +64,12 @@
 <script src="http://d3js.org/d3.v3.min.js"></script>
 Order: 
   <select id="order">
+  <option value="hclust">by cluster</option>
   <option value="probecontrast">by probe name and contrast name</option>
   <option value="probe">by probe name</option>
   <option value="contrast">by contrast name</option>
-  <option value="hclust">by cluster</option>
+  <option value="custom">by log2 ratio</option>
+  </select>
   </select>
 <div id="chart" style='overflow:auto; width:960px; height:480px;'></div>
 
