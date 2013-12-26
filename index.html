@@ -1,8 +1,18 @@
 <meta charset="utf-8">
     <style>
-      rect.bordered {
-        stroke: #CCC;
-        stroke-width:0.5px;   
+      rect.cell-border {
+        stroke: #eee;
+        stroke-width:0.3px;   
+      }
+
+      rect.cell-selected {
+        stroke: #00F;
+        stroke-width:0.3px;   
+      }
+
+      rect.cell-hover {
+        stroke: #F00;
+        stroke-width:0.3px;   
       }
 
       text.mono {
@@ -15,8 +25,11 @@
         fill: #000;
       }
 
-      text.axis-hover {
+      text.axis-highlight {
         fill: #c00;
+      }
+      text.axis-hover {
+        fill: #00C;
       }
       #tooltip {
         position: absolute;
@@ -59,21 +72,23 @@ Order:
 <div id="chart" style='overflow:auto; width:960px; height:480px;'></div>
 
 <script type="text/javascript">
-var margin = { top: 80, right: 10, bottom: 50, left: 100 },
+var margin = { top: 150, right: 10, bottom: 50, left: 100 },
   cellSize=12;
-  col_number=60;
+  col_number=329;
   row_number=50;
-  width = cellSize*col_number, 
-  height = cellSize*row_number ,
-  legendElementWidth = cellSize*3,
+  width = cellSize*col_number, // - margin.left - margin.right,
+  height = cellSize*row_number , // - margin.top - margin.bottom,
+  //gridSize = Math.floor(width / 24),
+  legendElementWidth = cellSize*2.5,
   colorBuckets = 21,
   colors = ['#005824','#1A693B','#347B53','#4F8D6B','#699F83','#83B09B','#9EC2B3','#B8D4CB','#D2E6E3','#EDF8FB','#FFFFFF','#F1EEF6','#E6D3E1','#DBB9CD','#D19EB9','#C684A4','#BB6990','#B14F7C','#A63467','#9B1A53','#91003F'];
-  hcrow = [49,11,30,4,18,6,12,20,19,33,32,26,44,35,38,3,23,41,22,10,2,15,16,36,8,25,29,7,27,34,48,31,45,43,14,9,39,1,37,47,42,21,40,5,28,46,50,17,24,13], // change to gene name or probe id
-  hccol = [6,5,41,12,42,21,58,56,14,16,43,15,17,46,47,48,54,49,37,38,25,22,7,8,2,45,9,20,24,44,23,19,13,40,11,1,39,53,10,52,3,26,27,60,50,51,59,18,31,32,30,4,55,28,29,57,36,34,33,35], // change to gene name or probe id
+  hcrow = [49,11,30,16,7,45,21,5,40,37,1,42,17,50,28,8,25,29,36,27,34,44,18,4,41,22,2,33,47,43,10,32,23,20,19,26,6,12,38,35,15,46,14,3,9,48,31,39,24,13], // change to gene name or probe id
+  hccol = [177,167,178,288,149,264,218,130,129,205,201,206,203,202,204,265,168,305,153,117,136,133,55,53,112,54,52,95,238,239,240,1,76,171,170,241,287,108,16,207,294,97,14,306,292,60,31,61,216,257,237,226,276,281,15,111,303,22,300,327,326,220,293,71,311,310,164,322,325,131,183,182,279,313,25,24,7,6,295,258,49,50,51,256,255,119,120,104,262,261,81,169,78,289,74,5,284,314,103,278,307,280,127,99,102,159,160,44,41,11,42,38,162,9,272,165,299,82,236,234,26,115,302,301,56,57,106,33,35,62,34,36,122,308,228,259,217,274,266,27,101,17,254,253,252,179,64,260,21,316,109,318,28,123,174,219,273,132,90,134,199,192,200,191,185,189,197,13,290,39,251,10,263,222,296,113,187,190,221,233,291,198,58,312,20,282,235,297,72,152,275,145,147,186,30,315,196,173,157,141,100,32,323,283,249,195,194,193,188,154,146,128,59,114,3,158,317,91,19,18,309,223,224,69,70,140,320,8,143,65,66,67,73,68,324,63,180,181,144,43,107,155,156,225,227,163,45,46,172,242,245,161,286,271,79,277,321,135,80,37,166,212,210,86,87,85,84,89,88,4,12,23,304,116,118,2,246,142,98,270,268,40,77,75,148,121,125,139,214,137,138,232,229,230,231,319,126,105,328,329,92,208,29,243,244,248,151,247,215,209,110,184,250,47,48,124,96,150,267,269,83,285,298,176,175,213,211,94,93], // change to gene name or probe id
   rowLabel = ['1759080_s_at','1759302_s_at','1759502_s_at','1759540_s_at','1759781_s_at','1759828_s_at','1759829_s_at','1759906_s_at','1760088_s_at','1760164_s_at','1760453_s_at','1760516_s_at','1760594_s_at','1760894_s_at','1760951_s_at','1761030_s_at','1761128_at','1761145_s_at','1761160_s_at','1761189_s_at','1761222_s_at','1761245_s_at','1761277_s_at','1761434_s_at','1761553_s_at','1761620_s_at','1761873_s_at','1761884_s_at','1761944_s_at','1762105_s_at','1762118_s_at','1762151_s_at','1762388_s_at','1762401_s_at','1762633_s_at','1762701_s_at','1762787_s_at','1762819_s_at','1762880_s_at','1762945_s_at','1762983_s_at','1763132_s_at','1763138_s_at','1763146_s_at','1763198_s_at','1763383_at','1763410_s_at','1763426_s_at','1763490_s_at','1763491_s_at'], // change to gene name or probe id
-  colLabel = ['con1027','con1028','con1029','con103','con1030','con1031','con1032','con1033','con1034','con1035','con1036','con1037','con1038','con1039','con1040','con1041','con108','con109','con110','con111','con112','con125','con126','con127','con128','con129','con130','con131','con132','con133','con134','con135','con136','con137','con138','con139','con14','con15','con150','con151','con152','con153','con16','con17','con174','con184','con185','con186','con187','con188','con189','con191','con192','con193','con194','con199','con2','con200','con201','con21']; // change to contrast name
+  colLabel = ['con1','con100','con1000','con101','con1012','con1013','con1014','con1015','con1016','con1018','con1019','con102','con1020','con1021','con1022','con1023','con1024','con1025','con1026','con1027','con1028','con1029','con103','con1030','con1031','con1032','con1033','con1034','con1035','con1036','con1037','con1038','con1039','con1040','con1041','con108','con109','con110','con111','con112','con125','con126','con127','con128','con129','con130','con131','con132','con133','con134','con135','con136','con137','con138','con139','con14','con15','con150','con151','con152','con153','con16','con17','con174','con184','con185','con186','con187','con188','con189','con191','con192','con193','con194','con199','con2','con200','con201','con21','con216','con217','con218','con219','con220','con221','con222','con223','con224','con225','con238','con239','con253','con254','con255','con256','con257','con258','con259','con260','con261','con262','con267','con268','con269','con27','con270','con271','con272','con273','con274','con275','con276','con277','con278','con28','con29','con3','con30','con31','con32','con33','con34','con35','con351','con36','con361','con362','con363','con364','con365','con366','con367','con368','con369','con37','con370','con371','con372','con373','con378','con379','con38','con380','con381','con382','con383','con384','con385','con386','con387','con388','con39','con4','con40','con402','con403','con404','con405','con406','con407','con408','con41','con410','con411','con418','con419','con42','con420','con421','con422','con423','con424','con425','con426','con427','con428','con43','con44','con445','con45','con46','con47','con48','con765','con766','con767','con768','con769','con770','con771','con772','con773','con774','con775','con776','con777','con778','con779','con780','con781','con799','con800','con801','con802','con803','con804','con828','con840','con842','con843','con844','con845','con846','con847','con848','con85','con851','con852','con853','con854','con855','con856','con857','con858','con859','con86','con860','con861','con862','con863','con864','con865','con866','con867','con868','con869','con87','con870','con871','con872','con873','con874','con875','con876','con877','con878','con879','con88','con880','con881','con884','con885','con886','con887','con888','con889','con89','con890','con891','con892','con893','con894','con90','con900','con901','con902','con903','con904','con905','con906','con907','con908','con909','con91','con910','con911','con912','con913','con918','con919','con92','con921','con922','con923','con924','con925','con926','con927','con93','con931','con932','con933','con94','con95','con951','con952','con953','con954','con955','con956','con957','con958','con959','con96','con960','con961','con962','con963','con964','con965','con966','con967','con97','con973','con974','con975','con976','con977','con98','con989','con99','con990','con991','con992','con994','con996','con997','con998','con999']; // change to contrast name
 
-d3.tsv("data_heatmap.tsv",function(d) {
+d3.tsv("./temp/1a53ac58044f6fdc6aef8fa575ff1bc1.tsv",
+function(d) {
   return {
     row:   +d.row_idx,
     col:   +d.col_idx,
@@ -89,61 +104,60 @@ function(error, data) {
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      ;
+  var rowSortOrder=false;
+  var colSortOrder=false;
   var rowLabels = svg.selectAll(".rowLabel")
       .data(rowLabel)
       .enter().append("text")
       .text(function (d) { return d; })
       .attr("x", 0)
-      .attr("y", function (d, i) { return i * cellSize; })
+      .attr("y", function (d, i) { return hcrow.indexOf(i+1) * cellSize; })
       .style("text-anchor", "end")
       .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
-      .attr("class", "rowLabel mono axis") 
+      .attr("class", function (d,i) { return "rowLabel mono r"+i;} ) 
       .on("mouseover", function(d) {d3.select(this).classed("axis-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("axis-hover",false);})
-      .on("click", function(d) {
-            // sort data by log2ratio in selected probe name
-      })
+      .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",i,rowSortOrder);d3.select("#order").property("selectedIndex", 4).node().focus();;})
       ;
-        
-
 
   var colLabels = svg.selectAll(".colLabel")
       .data(colLabel)
       .enter().append("text")
       .text(function (d) { return d; })
       .attr("x", 0)
-      .attr("y", function (d, i) { return i * cellSize; })
+      .attr("y", function (d, i) { return hccol.indexOf(i+1) * cellSize; })
       .style("text-anchor", "left")
       .attr("transform", "translate("+cellSize/2 + ",-6) rotate (-90)")
-      .attr("class",  "colLabel mono axis")
+      .attr("class",  function (d,i) { return "colLabel mono c"+i;} )
       .on("mouseover", function(d) {d3.select(this).classed("axis-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("axis-hover",false);})
-      .on("click", function(d) {
-            // sort data by log2ratio in selected contrast id 
-      })
+      .on("click", function(d,i) {colSortOrder=!colSortOrder;  sortbylabel("c",i,colSortOrder);d3.select("#order").property("selectedIndex", 4).node().focus();;})
       ;
-         
 
   var heatMap = svg.selectAll(".cell")
       .data(data,function(d){return d.row+":"+d.col;})
       .enter().append("rect")
-      .attr("x", function(d) { return (d.col - 1) * cellSize; })
-      .attr("y", function(d) { return (d.row - 1) * cellSize; })
-      //.attr("rx", 4)
-      //.attr("ry", 4)
-      .attr("class", "cell bordered")
+      .attr("x", function(d) { return hccol.indexOf(d.col) * cellSize; })
+      .attr("y", function(d) { return hcrow.indexOf(d.row) * cellSize; })
+      .attr("class", function(d){return "cell cell-borderi cr"+(d.row-1)+" cc"+(d.col-1);})
       .attr("width", cellSize)
       .attr("height", cellSize)
       .style("fill", function(d) { return colorScale(d.value); })
       .on("click", function(d) {
-             d3.selectAll(".rowLabel").classed("selected",function(r,ri){ return ri==(d.row-1);});
+             var rowtext=d3.select(".r"+(d.row-1));
+             if(rowtext.classed("axis-selected")==false){
+                 rowtext.classed("axis-selected",true);
+             }else{
+                 rowtext.classed("axis-selected",false);
+             }
       })
       .on("mouseover", function(d){
              //highlight text
-             d3.selectAll(".rowLabel").classed("axis-hover",function(r,ri){ return ri==(d.row-1);});
-             d3.selectAll(".colLabel").classed("axis-hover",function(c,ci){ return ci==(d.col-1);});
+             d3.select(this).classed("cell-hover",true);
+             d3.selectAll(".rowLabel").classed("axis-highlight",function(r,ri){ return ri==(d.row-1);});
+             d3.selectAll(".colLabel").classed("axis-highlight",function(c,ci){ return ci==(d.col-1);});
  
              //Update the tooltip position and value
              d3.select("#tooltip")
@@ -155,8 +169,9 @@ function(error, data) {
              d3.select("#tooltip").classed("hidden", false);
       })
       .on("mouseout", function(){
-             d3.selectAll(".rowLabel").classed("axis-hover",false);
-             d3.selectAll(".colLabel").classed("axis-hover",false);
+             d3.select(this).classed("cell-hover",false);
+             d3.selectAll(".rowLabel").classed("axis-highlight",false);
+             d3.selectAll(".colLabel").classed("axis-highlight",false);
              d3.select("#tooltip").classed("hidden", true);})
       ;
 
@@ -170,14 +185,46 @@ function(error, data) {
     .attr("x", function(d, i) { return legendElementWidth * i; })
     .attr("y", height+(cellSize*2))
     .attr("width", legendElementWidth)
-    .attr("height", cellSize / 2)
+    .attr("height", cellSize)
     .style("fill", function(d, i) { return colors[i]; });
 
   legend.append("text")
     .attr("class", "mono")
     .text(function(d) { return d; })
+    .attr("width", legendElementWidth)
     .attr("x", function(d, i) { return legendElementWidth * i; })
     .attr("y", height + (cellSize*4));
+
+
+// Change ordering of cells
+
+  function sortbylabel(rORc,i,sortOrder){
+       var t = svg.transition().duration(3000);
+       var log2r=[];
+       var sorted; // sorted is zero-based index
+       d3.selectAll(".c"+rORc+i) 
+         .filter(function(ce){
+            log2r.push(ce.value);
+          })
+       ;
+       if(rORc=="r"){ // sort log2ratio of a gene
+         sorted=d3.range(col_number).sort(function(a,b){ if(sortOrder){ return log2r[b]-log2r[a];}else{ return log2r[a]-log2r[b];}});
+         t.selectAll(".cell")
+           .attr("x", function(d) { return sorted.indexOf(d.col-1) * cellSize; })
+           ;
+         t.selectAll(".colLabel")
+          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
+         ;
+       }else{ // sort log2ratio of a contrast
+         sorted=d3.range(row_number).sort(function(a,b){if( sortOrder){ return log2r[b]-log2r[a];}else{ return log2r[a]-log2r[b];}});
+         t.selectAll(".cell")
+           .attr("y", function(d) { return sorted.indexOf(d.row-1) * cellSize; })
+           ;
+         t.selectAll(".rowLabel")
+          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
+         ;
+       }
+  }
 
   d3.select("#order").on("change",function(){
     order(this.value);
@@ -189,7 +236,6 @@ function(error, data) {
     t.selectAll(".cell")
       .attr("x", function(d) { return hccol.indexOf(d.col) * cellSize; })
       .attr("y", function(d) { return hcrow.indexOf(d.row) * cellSize; })
-//      .style("fill", function(d) { return colorScale(d.value); })
       ;
 
     t.selectAll(".rowLabel")
@@ -205,7 +251,6 @@ function(error, data) {
     t.selectAll(".cell")
       .attr("x", function(d) { return (d.col - 1) * cellSize; })
       .attr("y", function(d) { return (d.row - 1) * cellSize; })
-//      .style("fill", function(d) { return colorScale(d.value); })
       ;
 
     t.selectAll(".rowLabel")
@@ -220,7 +265,6 @@ function(error, data) {
     var t = svg.transition().duration(3000);
     t.selectAll(".cell")
       .attr("y", function(d) { return (d.row - 1) * cellSize; })
-//      .style("fill", function(d) { return colorScale(d.value); })
       ;
 
     t.selectAll(".rowLabel")
@@ -230,14 +274,12 @@ function(error, data) {
     var t = svg.transition().duration(3000);
     t.selectAll(".cell")
       .attr("x", function(d) { return (d.col - 1) * cellSize; })
-//      .style("fill", function(d) { return colorScale(d.value); })
       ;
     t.selectAll(".colLabel")
       .attr("y", function (d, i) { return i * cellSize; })
       ;
    }
   }
-
 
 });
 </script>
