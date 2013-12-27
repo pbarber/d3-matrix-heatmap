@@ -5,6 +5,8 @@ change order
 - probe name and contrast name: sort by probe name and contrast name
 - probe name: sort by probe name
 - contrast name: sort by contrast name
+
+
 - click a row label: sort cell values with the same row label
 - click a col label: sort cell values with the same col label
 - click a cell: select the row label of corresponding cell
