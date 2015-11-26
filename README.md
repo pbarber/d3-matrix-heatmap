@@ -1,5 +1,7 @@
 This example is inspired by [Co-occurrence Matrix](http://bost.ocks.org/mike/miserables/ "Les Misérables Co-occurrence"), [Trulia Trends](http://trends.truliablog.com/2011/09/house-hunter-by-day-not-so-much-after-midnight/ "Trulia Trends"), and [Selection Frame](http://bl.ocks.org/lgersman/5311083 "Selection Frame").
 
+You can try this example at http://bl.ocks.org/ianyfchang/8119685
+
 Changing orders
 
 + cluster: hierarchical clustering
