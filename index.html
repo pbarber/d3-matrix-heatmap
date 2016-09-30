@@ -93,10 +93,9 @@
 Order:
   <select id="order">
   <option value="hclust">by cluster</option>
-  <option value="probecontrast">by probe name and contrast name</option>
-  <option value="probe">by probe name</option>
-  <option value="contrast">by contrast name</option>
-  <option value="custom">by log2 ratio</option>
+  <option value="row_column">by row and column labels</option>
+  <option value="row">by row label</option>
+  <option value="column">by column label</option>
   </select>
   </select>
 <div class="container" id="chart"></div>
@@ -122,8 +121,8 @@ function ready(error, json) {
 
   var colLabel = json["col_label"];
   var rowLabel = json["row_label"];
-  var hccol = json["hccol"];
-  var hcrow = json["hcrow"];
+  var col_order = json["col_order"];
+  var row_order = json["row_order"];
   var data = json["data"];
 
   var colorScale = d3.scale.quantile()
@@ -145,7 +144,7 @@ function ready(error, json) {
       .append("text")
       .text(function (d) { return d; })
       .attr("x", 0)
-      .attr("y", function (d, i) { return hcrow.indexOf(i+1) * cellSize; })
+      .attr("y", function (d, i) { return row_order.indexOf(i+1) * cellSize; })
       .style("text-anchor", "end")
       .attr("transform", "translate(-6," + cellSize / 1.5 + ")")
       .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
@@ -161,7 +160,7 @@ function ready(error, json) {
       .append("text")
       .text(function (d) { return d; })
       .attr("x", 0)
-      .attr("y", function (d, i) { return hccol.indexOf(i+1) * cellSize; })
+      .attr("y", function (d, i) { return col_order.indexOf(i+1) * cellSize; })
       .style("text-anchor", "left")
       .attr("transform", "translate("+cellSize/2 + ",-6) rotate (-90)")
       .attr("class",  function (d,i) { return "colLabel mono c"+i;} )
@@ -175,8 +174,8 @@ function ready(error, json) {
         .data(data,function(d){return d.row+":"+d.col;})
         .enter()
         .append("rect")
-        .attr("x", function(d) { return hccol.indexOf(d.col) * cellSize; })
-        .attr("y", function(d) { return hcrow.indexOf(d.row) * cellSize; })
+        .attr("x", function(d) { return col_order.indexOf(d.col) * cellSize; })
+        .attr("y", function(d) { return row_order.indexOf(d.row) * cellSize; })
         .attr("class", function(d){return "cell cell-border cr"+(d.row-1)+" cc"+(d.col-1);})
         .attr("width", cellSize)
         .attr("height", cellSize)
@@ -269,19 +268,19 @@ function ready(error, json) {
    if(value=="hclust"){
     var t = svg.transition().duration(3000);
     t.selectAll(".cell")
-      .attr("x", function(d) { return hccol.indexOf(d.col) * cellSize; })
-      .attr("y", function(d) { return hcrow.indexOf(d.row) * cellSize; })
+      .attr("x", function(d) { return col_order.indexOf(d.col) * cellSize; })
+      .attr("y", function(d) { return row_order.indexOf(d.row) * cellSize; })
       ;
 
     t.selectAll(".rowLabel")
-      .attr("y", function (d, i) { return hcrow.indexOf(i+1) * cellSize; })
+      .attr("y", function (d, i) { return row_order.indexOf(i+1) * cellSize; })
       ;
 
     t.selectAll(".colLabel")
-      .attr("y", function (d, i) { return hccol.indexOf(i+1) * cellSize; })
+      .attr("y", function (d, i) { return col_order.indexOf(i+1) * cellSize; })
       ;
 
-   }else if (value=="probecontrast"){
+   }else if (value=="row_column"){
     var t = svg.transition().duration(3000);
     t.selectAll(".cell")
       .attr("x", function(d) { return (d.col - 1) * cellSize; })
@@ -296,7 +295,7 @@ function ready(error, json) {
       .attr("y", function (d, i) { return i * cellSize; })
       ;
 
-   }else if (value=="probe"){
+   }else if (value=="row"){
     var t = svg.transition().duration(3000);
     t.selectAll(".cell")
       .attr("y", function(d) { return (d.row - 1) * cellSize; })
@@ -305,7 +304,7 @@ function ready(error, json) {
     t.selectAll(".rowLabel")
       .attr("y", function (d, i) { return i * cellSize; })
       ;
-   }else if (value=="contrast"){
+   }else if (value=="column"){
     var t = svg.transition().duration(3000);
     t.selectAll(".cell")
       .attr("x", function(d) { return (d.col - 1) * cellSize; })
