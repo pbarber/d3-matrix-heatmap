@@ -92,24 +92,17 @@
 <script src="https://d3js.org/d3-queue.v3.min.js"></script>
 Order:
   <select id="order">
-  <option value="hclust">by cluster</option>
+  <option value="order">by row and column order</option>
   <option value="row_column">by row and column labels</option>
   <option value="row">by row label</option>
   <option value="column">by column label</option>
+  <option value="value">by value</option>
   </select>
   </select>
-<div class="container" id="chart"></div>
+<div class="container-fluid" id="chart"></div>
 
 <script type="text/javascript">
-var margin = { top: 150, right: 10, bottom: 50, left: 100 },
-  cellSize=12;
-  col_number=60;
-  row_number=50;
-  width = cellSize*col_number, // - margin.left - margin.right,
-  height = cellSize*row_number , // - margin.top - margin.bottom,
-  //gridSize = Math.floor(width / 24),
-  legendElementWidth = cellSize*2.5,
-  colorBuckets = 21,
+var margin = { top: 100, right: 10, bottom: 60, left: 100 },
   colors = ['#005824','#1A693B','#347B53','#4F8D6B','#699F83','#83B09B','#9EC2B3','#B8D4CB','#D2E6E3','#EDF8FB','#FFFFFF','#F1EEF6','#E6D3E1','#DBB9CD','#D19EB9','#C684A4','#BB6990','#B14F7C','#A63467','#9B1A53','#91003F'];
 
 
@@ -124,6 +117,19 @@ function ready(error, json) {
   var col_order = json["col_order"];
   var row_order = json["row_order"];
   var data = json["data"];
+
+  var col_number = colLabel.length
+  var row_number = rowLabel.length
+
+  var cellHeight = ($(window).height() - 140)/row_number
+  var cellWidth = ($(window).width() - 150)/col_number
+
+  var cellSize = Math.min(cellHeight, cellWidth);
+
+  var width = cellSize*col_number
+  var height = cellSize*row_number
+
+  var legendElementWidth = width / 21
 
   var colorScale = d3.scale.quantile()
       .domain([ -10 , 0, 10])
@@ -265,7 +271,7 @@ function ready(error, json) {
   });
 
   function order(value){
-   if(value=="hclust"){
+   if(value=="order"){
     var t = svg.transition().duration(3000);
     t.selectAll(".cell")
       .attr("x", function(d) { return col_order.indexOf(d.col) * cellSize; })
