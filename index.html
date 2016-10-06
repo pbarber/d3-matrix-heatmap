@@ -122,7 +122,7 @@
                    .style("left", (d3.event.pageX+10) + "px")
                    .style("top", (d3.event.pageY-10) + "px")
                    .select("#value")
-                   .text("lables:"+rowLabel[d.row-1]+","+colLabel[d.col-1]+"\ndata:"+d.value+"\nrow-col-idx:"+d.col+","+d.row+"\ncell-xy "+this.x.baseVal.value+", "+this.y.baseVal.value);
+                   .text("["+rowLabel[d.row-1]+", "+colLabel[d.col-1]+"]: "+d.value);
                  //Show the tooltip
                  d3.select("#tooltip").classed("hidden", false);
           })
@@ -422,7 +422,7 @@
   <div class="row">
     <div class="col-sm-6" id="chart">
       <div id="tooltip" class="hidden">
-              <p><span id="value"></p>
+        <p><span id="value"></p>
       </div>
     </div>
     <div class="col-sm-6">
