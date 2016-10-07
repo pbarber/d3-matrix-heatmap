@@ -28,8 +28,12 @@
     var col_number = colLabel.length
     var row_number = rowLabel.length
 
+    frame = d3.select('#chart').attr('class', 'frame')
+    fh = frame.style("height").replace("px", "");
+    fw = frame.style("width").replace("px", "");
+
     var cellHeight = ($(window).height() - 140)/row_number
-    var cellWidth = ($(window).width() - 150)/col_number
+    var cellWidth = (fw - 150)/col_number
 
     var cellSize = Math.min(cellHeight, cellWidth);
 
@@ -43,10 +47,12 @@
         .range(colors);
 
     var svg = d3.select("#chart").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .append("g")
+          .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
         ;
     var rowSortOrder=false;
     var colSortOrder=false;
@@ -152,6 +158,10 @@
       .attr("width", legendElementWidth)
       .attr("x", function(d, i) { return legendElementWidth * i; })
       .attr("y", height + (cellSize*4));
+
+    function zoom() {
+      svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
 
     // Change ordering of cells
 
@@ -421,11 +431,6 @@
 <body>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-6" id="chart">
-      <div id="tooltip" class="hidden">
-        <p><span id="value"></p>
-      </div>
-    </div>
     <div class="col-sm-6">
       <div class="dropdown pull-right">
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Order by row and column order
@@ -438,6 +443,16 @@
           <li class="disabled"><a href="#">Order by row value</a></li>
           <li class="disabled"><a href="#">Order by column value</a></li>
         </ul>
+      </div>
+      <div id="tooltip" class="hidden">
+        <p><span id="value"></p>
+      </div>
+      <div id="chart">
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="panel panel-default">
+        <div class="panel-body" id="panel"></div>
       </div>
     </div>
   </div>
