@@ -109,14 +109,10 @@
           .attr("width", cellSize)
           .attr("height", cellSize)
           .style("fill", function(d) { return colorScale(d.value); })
-          /* .on("click", function(d) {
+          .on("mousedown", function(d) {
                  var rowtext=d3.select(".r"+(d.row-1));
-                 if(rowtext.classed("text-selected")==false){
-                     rowtext.classed("text-selected",true);
-                 }else{
-                     rowtext.classed("text-selected",false);
-                 }
-          })*/
+                 $("#panel").text(d.row + ":" + d.col)
+          })
           .on("mouseover", function(d){
                  //highlight text
                  d3.select(this).classed("cell-hover",true);
