@@ -9,9 +9,7 @@
   <script src="local/d3.v3.min.js"></script>
   <script src="local/d3-queue.v3.min.js"></script>
   <script type="text/javascript">
-  var margin = { top: 100, right: 10, bottom: 60, left: 100 },
-    colors = ['#005824','#1A693B','#347B53','#4F8D6B','#699F83','#83B09B','#9EC2B3','#B8D4CB','#D2E6E3','#EDF8FB','#FFFFFF','#F1EEF6','#E6D3E1','#DBB9CD','#D19EB9','#C684A4','#BB6990','#B14F7C','#A63467','#9B1A53','#91003F'];
-
+  var margin = { top: 100, right: 10, bottom: 100, left: 100 };
 
   d3.queue()
   .defer(d3.json, "data.json")
@@ -28,6 +26,8 @@
     var col_order = json["col_order"];
     var row_order = json["row_order"];
     var data = json["data"];
+    var colours = json["colours"];
+    var colour_domain = json["colour_domain"];
 
     var col_number = colLabel.length
     var row_number = rowLabel.length
@@ -36,19 +36,17 @@
     fh = frame.style("height").replace("px", "");
     fw = frame.style("width").replace("px", "");
 
-    var cellHeight = ($(window).height() - 140)/row_number
-    var cellWidth = (fw - 150)/col_number
+    var cellHeight = ($(window).height() - margin.top - margin.bottom)/(row_number+3)
+    var cellWidth = (fw - margin.right - margin.left)/col_number
 
     var cellSize = Math.min(cellHeight, cellWidth);
 
     var width = cellSize*col_number
     var height = cellSize*row_number
 
-    var legendElementWidth = width / 21
-
-    var colorScale = d3.scale.quantile()
-        .domain([ -10 , 0, 10])
-        .range(colors);
+    var colorScale = d3.scale.linear()
+        .domain(colour_domain)
+        .range(colours);
 
     var svg = d3.select("#chart").append("svg")
           .attr("width", width + margin.left + margin.right)
@@ -112,7 +110,13 @@
           .attr("class", function(d){return "cell cell-border cr"+(d.row-1)+" cc"+(d.col-1);})
           .attr("width", cellSize)
           .attr("height", cellSize)
-          .style("fill", function(d) { return colorScale(d.value); })
+          .style("fill", function(d) {
+                 if (d.value) {
+                     return colorScale(d.value);
+                 } else {
+                     return "#ffffff";
+                 }
+          })
           .on("mousedown", function(d) {
                  var rowtext=d3.select(".r"+(d.row-1));
                  var paneltext="["+rowLabel[d.row-1]+", "+colLabel[d.col-1]+"]: "+d.value
@@ -147,23 +151,43 @@
           ;
 
     var legend = svg.selectAll(".legend")
-        .data([-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10])
+        .data(colour_domain)
         .enter().append("g")
         .attr("class", "legend");
 
-    legend.append("rect")
-      .attr("x", function(d, i) { return legendElementWidth * i; })
-      .attr("y", height+(cellSize*2))
-      .attr("width", legendElementWidth)
-      .attr("height", cellSize)
-      .style("fill", function(d, i) { return colors[i]; });
+    var defs = svg.append("defs");
+    var linearGradient = defs.append("linearGradient")
+        .attr("id", "legend-colours")
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%");
 
-    legend.append("text")
-      .attr("class", "mono")
-      .text(function(d) { return d; })
-      .attr("width", legendElementWidth)
-      .attr("x", function(d, i) { return legendElementWidth * i; })
-      .attr("y", height + (cellSize*4));
+    linearGradient.selectAll("stop")
+        .data( colorScale.range() )
+        .enter().append("stop")
+        .attr("offset", function(d,i) { return i/(colorScale.range().length-1); })
+        .attr("stop-color", function(d) { return d; });
+
+    var legendxScale = d3.scale.linear()
+        .range([0, width])
+        .domain([colour_domain[0], colour_domain[colour_domain.length-1]]);
+
+    var legendxAxis = d3.svg.axis()
+        .orient("bottom")
+        .tickSize([0, 0])
+        .scale(legendxScale);
+
+    legend.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + (height+(cellSize*3.2)) + ")")
+        .call(legendxAxis);
+
+    legend.append("rect")
+        .attr("y", height+(cellSize*2))
+        .attr("width", width)
+        .attr("height", cellSize)
+        .style("fill", "url(#legend-colours)");
 
     function zoom() {
       svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -391,6 +415,12 @@
       }
 
       text.mono {
+        font-size: 9pt;
+        font-family: Consolas, courier;
+        fill: #aaa;
+      }
+
+      text {
         font-size: 9pt;
         font-family: Consolas, courier;
         fill: #aaa;
