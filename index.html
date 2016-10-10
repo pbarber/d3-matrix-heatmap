@@ -19,6 +19,10 @@
 
   function ready(error, json) {
 
+    if (error) {
+      console.log(error)
+    }
+
     var colLabel = json["col_label"];
     var rowLabel = json["row_label"];
     var col_order = json["col_order"];
@@ -111,7 +115,7 @@
           .style("fill", function(d) { return colorScale(d.value); })
           .on("mousedown", function(d) {
                  var rowtext=d3.select(".r"+(d.row-1));
-                 $("#panel").text(d.row + ":" + d.col)
+                 $("#panel").text("["+rowLabel[d.row-1]+", "+colLabel[d.col-1]+"]: "+d.value);
           })
           .on("mouseover", function(d){
                  //highlight text
@@ -448,7 +452,7 @@
     </div>
     <div class="col-sm-6">
       <div class="panel panel-default">
-        <div class="panel-body" id="panel"></div>
+        <div class="panel-body" id="panel">Click heatmap to select data point.</div>
       </div>
     </div>
   </div>
