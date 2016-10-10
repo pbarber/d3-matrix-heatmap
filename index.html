@@ -115,7 +115,13 @@
           .style("fill", function(d) { return colorScale(d.value); })
           .on("mousedown", function(d) {
                  var rowtext=d3.select(".r"+(d.row-1));
-                 $("#panel").text("["+rowLabel[d.row-1]+", "+colLabel[d.col-1]+"]: "+d.value);
+                 var paneltext="["+rowLabel[d.row-1]+", "+colLabel[d.col-1]+"]: "+d.value
+                 $("#panel").text(paneltext);
+                 if (d.img) {
+                     $("#panel-img").attr("src", d.img);
+                 } else {
+                     $("#panel-img").attr("src", "");
+                 }
           })
           .on("mouseover", function(d){
                  //highlight text
@@ -452,7 +458,12 @@
     </div>
     <div class="col-sm-6">
       <div class="panel panel-default">
-        <div class="panel-body" id="panel">Click heatmap to select data point.</div>
+        <div class="panel-heading" id="panel">
+          Data point
+        </div>
+        <div class="panel-body">
+          <img id="panel-img" src="" alt="Click heatmap to select data point." class="img-responsive"/>
+        </div>
       </div>
     </div>
   </div>
