@@ -83,6 +83,17 @@ function matrix_heatmap(error, json) {
       })
       ;
 
+  var defs = svg.append("defs");
+  var diagonalHatch = defs.append("pattern")
+                         .attr("id", "diagonalHatch")
+                         .attr("patternUnits", "userSpaceOnUse")
+                         .attr("width", 4)
+                         .attr("height", 4)
+                      .append('path')
+                        .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+                        .attr('stroke', '#000000')
+                        .attr('stroke-width', 1);
+
   var heatMap = svg.append("g").attr("class","g3")
         .selectAll(".cellg")
         .data(data,function(d){return d.row+":"+d.col;})
@@ -94,10 +105,10 @@ function matrix_heatmap(error, json) {
         .attr("width", cellSize)
         .attr("height", cellSize)
         .style("fill", function(d) {
-               if (d.value) {
+               if (d.value !== "") {
                    return colorScale(d.value);
                } else {
-                   return "#ffffff";
+                   return "url(#diagonalHatch)";
                }
         })
         .on("mousedown", function(d) {
@@ -138,7 +149,6 @@ function matrix_heatmap(error, json) {
       .enter().append("g")
       .attr("class", "legend");
 
-  var defs = svg.append("defs");
   var linearGradient = defs.append("linearGradient")
       .attr("id", "legend-colours")
       .attr("x1", "0%")
