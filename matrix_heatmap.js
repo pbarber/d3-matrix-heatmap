@@ -90,9 +90,9 @@ function matrix_heatmap(error, json) {
                          .attr("width", 4)
                          .attr("height", 4)
                       .append('path')
-                        .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
-                        .attr('stroke', '#000000')
-                        .attr('stroke-width', 1);
+                         .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+                         .attr('stroke', 'grey')
+                         .attr('stroke-width', 1);
 
   var heatMap = svg.append("g").attr("class","g3")
         .selectAll(".cellg")
