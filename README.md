@@ -1,3 +1,8 @@
+The underlying javascript is structured to allow users to more easily create matrix/heatmap visualisations by:
+
+* providing a JSON file containing the data to be plotted and the colour ranges
+* creating a minimal HTML file to load the JSON
+
 This visualisation is based on [Ian YF Chang's heatmap](http://bl.ocks.org/ianyfchang/8119685) which itself was inspired by:
 
 * [Co-occurrence Matrix](http://bost.ocks.org/mike/miserables/),
